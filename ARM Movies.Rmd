@@ -1,0 +1,51 @@
+---
+title: "ARM Movies"
+output: html_document
+date: "2024-02-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(arules)
+
+movies <- read.csv("arm_movies_final.csv", header = TRUE)
+
+str(movies)
+
+# Convert the data frame to a matrix of mode "transaction"
+trans_matrix <- as.matrix(movies)
+
+# Convert the matrix to a transaction object
+trans <- as(trans_matrix, "transactions")
+
+inspect(head(trans))
+
+# Performing Association Rule Mining
+rules_1 <- apriori(trans, parameter = list(supp = 0.02, conf = 0.5, minlen = 2))
+
+# Inspect the resulting rules
+inspect(head(sort(rules_1, by = 'support'), n = 15))
+inspect(head(sort(rules_1, by = 'confidence'), n = 15))
+inspect(head(sort(rules_1, by = 'lift'), n = 15))
+
+library(arulesViz)
+
+# Plot the network graph
+plot(rules_1, method = "graph", control = list(type = "items"))
+
+# Second Set of rules with Supp=0.01 and Confidence=0.6
+rules_2 <- apriori(trans, parameter = list(supp = 0.01, conf = 0.6, minlen = 2))
+
+# Inspect the resulting rules
+inspect(head(sort(rules_2, by = 'support'), n = 15))
+inspect(head(sort(rules_2, by = 'confidence'), n = 15))
+inspect(head(sort(rules_2, by = 'lift'), n = 15))
+
+library(arulesViz)
+# Plot the network graph
+plot(rules_2, method = "graph", control = list(type = "items"))
+```
